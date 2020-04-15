@@ -352,4 +352,7 @@ healthchecksdb
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
 
+Api/Chat/Chat/obj/Debug/netcoreapp3.1/Chat.csprojAssemblyReference.cache
+Api/Chat/.vs/Chat/v16/.suo
+
 # End of https://www.gitignore.io/api/visualstudio
