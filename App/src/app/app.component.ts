@@ -26,7 +26,7 @@ export class AppComponent implements OnInit{
       this.message.message = this.txtMessage;
       this.message.date = new Date();
       this.messages.push(this.message);
-      //this.chatService.sendMessage(this.message);
+      this.chatService.sendMessage(this.message);
       this.txtMessage = '';
     }
   }
@@ -36,9 +36,10 @@ export class AppComponent implements OnInit{
   }
 
   private receiveMessages(): void {
-    this.chatService.messageReceived.subscribe((message)=>{
-        console.log(message);
+    this.chatService.messageReceived.subscribe((message: Message)=>{
+        message.messageType = MessageType.Received;
         this.messages.push(message);
+        console.log(message);
     });
   }
 }

@@ -9,7 +9,8 @@ import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 export class ChatService { 
     messageReceived = new EventEmitter<Message>();
     private _hubConnection: HubConnection;
-    
+    connectionId: string;
+
     constructor() {
         this.createConnection();
         this.startConnection();
@@ -25,8 +26,12 @@ export class ChatService {
     private startConnection(): void {
         this._hubConnection.start().then(() => {
             console.log('Conexao estabelecida!');
-          })
-          .catch(err => {
+            this._hubConnection.invoke('getConnectionId')
+                .then((connectionId) => {
+                   console.log('meu id de conexao: '+ connectionId);
+                   this.connectionId = connectionId;
+                }).catch(err => console.error(err.toString()));
+          }).catch(err => {
             console.log('Erro ao estabelcer conexao, tentando novamente...' + err);
             setTimeout(function () { this.startConnection(); }, 5000);
           });
@@ -38,7 +43,8 @@ export class ChatService {
     }
 
     listenMessages(): void {
-        this._hubConnection.on('ReceiveMessage', (data: any) => {
+        // apenas escutando todas msgs
+        this._hubConnection.on('ReceiveAllMessages', (data: any) => {
             this.messageReceived.emit(data);
         });
     }

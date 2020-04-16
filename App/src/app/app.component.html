@@ -49,7 +49,7 @@
         </div>
         <div class="card-body msg_card_body">
           <div *ngFor="let msg of messages"> 
-          <div class="d-flex justify-content-start mb-4" *ngIf="isReceived(msg.type)">
+          <div class="d-flex justify-content-start mb-4" *ngIf="isReceived(msg.messageType)">
             <div class="img_cont_msg">
               <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img_msg">
             </div>
@@ -58,7 +58,7 @@
               <!-- <span class="msg_time">{{msg.date | date:'medium'}}</span> -->
             </div>
           </div>
-          <div class="d-flex justify-content-end mb-4"  *ngIf="!isReceived(msg.type)">
+          <div class="d-flex justify-content-end mb-4"  *ngIf="!isReceived(msg.messageType)">
             <div class="msg_cotainer_send">
               {{msg.message}}
               <!-- <span class="msg_time_send">{{msg.date | date:'medium'}}</span> -->
