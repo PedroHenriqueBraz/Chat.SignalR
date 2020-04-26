@@ -1,4 +1,5 @@
 ﻿using Chat.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 
@@ -8,6 +9,9 @@ namespace Chat.Hubs
     {
         public async Task SendAll(Message message)
         {
+            var teste = Context;
+            
+          
             await Clients.All.SendAsync("ReceiveAllMessages", message);
         }
 
