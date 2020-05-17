@@ -5,15 +5,27 @@
         </div>
         <div class="card-body contacts_body">
           <h3>Participantes</h3>
-          <ul class="contacts" *ngFor="let partic of participants">
+          <ul class="contacts" *ngFor="let part of participants">
+            <li class="active">
+              <div class="d-flex bd-highlight" (click)="sendTo()">
+                <div class="img_cont">
+                  <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img">
+                  <span class="online_icon"></span>
+                </div>
+                <div class="user_info">
+                  <span>Todos</span>
+                  <p>Envie para todos participantes</p>
+                </div>
+              </div>
+            </li>
           <li class="active">
-            <div class="d-flex bd-highlight">
+            <div class="d-flex bd-highlight" (click)="sendTo(part.Name)">
               <div class="img_cont">
                 <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img">
                 <span class="online_icon"></span>
               </div>
               <div class="user_info">
-                <span>{{partic.Name}}</span>
+                <span>{{part.Name}}</span>
                 <p>Está online</p>
               </div>
             </div>
@@ -25,48 +37,33 @@
       <div class="col-md-8 col-xl-6 chat">
         <div class="card">
           <div class="card-header msg_head">
-            <div class="d-flex bd-highlight">
-              <div class="img_cont">
-                <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img">
-                <span class="online_icon"></span>
-              </div>
-              <div class="user_info">
-                <span>Chat with Khalid</span>
-                <p>1767 Messages</p>
-              </div>
-            </div>
           </div>
           <div class="card-body msg_card_body">
             <div *ngFor="let msg of messages"> 
-            <div class="d-flex justify-content-start mb-4" *ngIf="isReceived(msg.messageType)">
-              <div class="img_cont_msg">
-                <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img_msg">
+            <div class="d-flex justify-content-start mb-4" [class.private-msg]="msg.isPrivate" *ngIf="msg.isReceived">
+              <div>
+                {{msg.senderName}}
               </div>
               <div class="msg_cotainer">
-                {{msg.message}}
-                <!-- <span class="msg_time">{{msg.date | date:'medium'}}</span> -->
+                {{msg.text}}
               </div>
             </div>
-            <div class="d-flex justify-content-end mb-4"  *ngIf="!isReceived(msg.messageType)">
+            <div class="d-flex justify-content-end mb-4" [class.private-msg]="msg.isPrivate" *ngIf="!msg.isReceived">
               <div class="msg_cotainer_send">
-                {{msg.message}}
-                <!-- <span class="msg_time_send">{{msg.date | date:'medium'}}</span> -->
+                {{msg.text}}
               </div>
-              <div class="img_cont_msg">
-                <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img_msg">
+              <div>
+                <p>Você</p>
               </div>
             </div>
             </div>
           </div>
           <div class="card-footer">
             <div class="input-group">
-              <div class="input-group-append">
-                <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
-              </div>
-              <input type="text" class="form-control type_msg"  placeholder="Type your message..."
+              <input type="text" class="form-control type_msg"  placeholder="Escreva sua mensagem..."
                [(ngModel)]="txtMessage" (keydown.enter)="sendMessage()" />  
               <div class="input-group-append">
-                <span class="input-group-text send_btn"><i class="fa fa-location-arrow"></i></span>
+                <button class="input-group-text send_btn" (click)="sendMessage()"></button>
               </div>
             </div>
           </div>

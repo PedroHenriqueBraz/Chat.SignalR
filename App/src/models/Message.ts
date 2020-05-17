@@ -1,12 +1,7 @@
 export class Message {
-    userId: string;
-    userName: string;
-    message: string;
-    date: Date;
-    messageType: MessageType
-  }
-
-  export enum MessageType {
-      Received,
-      Sent
+    senderName?: string;
+    text: string;
+    sendDate: Date;
+    isReceived: boolean;
+    isPrivate: boolean;
   }

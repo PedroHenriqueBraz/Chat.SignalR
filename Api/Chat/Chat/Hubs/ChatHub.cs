@@ -1,5 +1,4 @@
 ﻿using Chat.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 
@@ -7,18 +6,22 @@ namespace Chat.Hubs
 {
     public class ChatHub : Hub
     {
+        public override async Task OnConnectedAsync()
+        {
+            //await Clients.All.SendAsync("NewParticipant", Context.UserIdentifier);
+            await Clients.Others.SendAsync("NewParticipant", Context.UserIdentifier);
+        }
+
         public async Task SendAll(Message message)
         {
-            var teste = Context;
-            
-          
+            message.SenderName = Context.UserIdentifier;
             await Clients.All.SendAsync("ReceiveAllMessages", message);
         }
 
-        public async Task Send(string userConnectionId, Message message)
+        public async Task SendPrivate(string id, Message message)
         {
-            await Clients.Client(userConnectionId).SendAsync("ReceiveMessage", message);
-            //await Clients.User(user).SendAsync("ReceiveMessage", message);
+            message.SenderName = Context.UserIdentifier;
+            await Clients.User(id).SendAsync("ReceivePrivateMessages", message);
         }
 
         public string GetConnectionId()

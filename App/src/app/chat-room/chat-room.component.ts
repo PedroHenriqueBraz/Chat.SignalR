@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Message, MessageType } from 'src/models/Message';
+import { Message } from 'src/models/Message';
 import { ChatService } from 'src/services/chat.service';
 import { Participant } from 'src/models/Participant';
 
@@ -14,37 +14,32 @@ export class ChatRoomComponent implements OnInit{
   txtMessage: string = '';
   participantMock = new Participant();
   participants = [];
-  
+  isPrivateMessage = false;
+  receiverName = '';
 
   constructor(private chatService: ChatService){}
 
   ngOnInit(): void {
-   // this.receiveParticipants();
+    this.receiveParticipants();
     this.receiveMessages();
-    this.participantMock.Name = 'Pedro';
-    this.participants.push(this.participantMock);
   }
 
   sendMessage(): void {
     if (this.txtMessage) {
-      this.message = new Message();
-      this.message.userId = 'id';
-      this.message.messageType = MessageType.Sent;
-      this.message.message = this.txtMessage;
-      this.message.date = new Date();
-      this.messages.push(this.message);
-      this.chatService.sendMessage(this.message);
+      this.message = this.chatService.createMessageToSend(this.txtMessage);
+      this.chatService.sendMessage(this.message, this.receiverName);
+      this.pushLocalMessages(this.message, this.receiverName);
       this.txtMessage = '';
     }
   }
 
-  isReceived(type: MessageType): boolean {
-    return type === MessageType.Received;
+  sendTo(name?: string){
+    console.log(name)
+   this.receiverName = name;
   }
 
   private receiveMessages(): void {
     this.chatService.messageReceived.subscribe((message: Message)=>{
-        //message.messageType = MessageType.Received;
         this.messages.push(message);
         console.log(message);
     });
@@ -55,6 +50,13 @@ export class ChatRoomComponent implements OnInit{
       console.log(p);
       this.participants.push(p);
     });
+  }
+
+  private pushLocalMessages(message: Message, receiverName: string){
+    if (receiverName) {
+      message.isPrivate = true;
+    }
+    this.messages.push(message);
   }
 }
  

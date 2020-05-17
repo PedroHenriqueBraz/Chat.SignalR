@@ -1,4 +1,6 @@
 <div>
     <label class="form-control">Usuario:</label>
-    <input type="text" [(ngModel)]="user" (keydown.enter)="sendUser()">
+    <input type="text" [(ngModel)]="user.username">
+    <label class="form-control">Usuario:</label>
+    <input type="text" [(ngModel)]="user.password" (keydown.enter)="sendUser()">
 </div>

@@ -7,8 +7,8 @@ namespace Chat.Models
 {
     public class Message
     {
-        public string clientId { get; set; }
-        public string? message { get; set; }
-        public DateTime date { get; set; }
+        public string? SenderName { get; set; }
+        public string? Text { get; set; }
+        public DateTime SendDate { get; set; }
     }
 }

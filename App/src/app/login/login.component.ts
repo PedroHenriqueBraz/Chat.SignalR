@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginService } from './login.service';
+import { TokenService } from 'src/services/token.service';
 
 @Component({
   selector: 'app-login',
@@ -8,17 +9,25 @@ import { LoginService } from './login.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  user: string = '';
-
-  constructor(private router: Router, private loginService: LoginService){}
+  user: any = {
+    username: '',
+    password: ''
+  };
+ 
+  constructor(private router: Router,
+    private loginService: LoginService,
+    private tokenService: TokenService){}
   
   sendUser() {
     if(this.user) {
       console.log(this.user);
-       
-      
-      // se autenticou com sucesso, entao vou para rota do chat
-      this.router.navigate(['/chat']);
+      this.loginService.authenticateUser(this.user)
+      .subscribe(
+        data => {
+          console.log(data);
+          this.tokenService.setToken(data.token);
+          this.router.navigate(['/chat']);
+        });
     }
   }
 }

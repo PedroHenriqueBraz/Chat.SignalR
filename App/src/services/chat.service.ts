@@ -2,6 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Message } from 'src/models/Message';
 import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 import { Participant } from 'src/models/Participant';
+import { TokenService } from './token.service';
 
 @Injectable({
     providedIn: 'root',
@@ -12,11 +13,11 @@ export class ChatService {
     participantConnected = new EventEmitter<Participant>();
     private _hubConnection: HubConnection;
     connectionId: string;
-
-    constructor() {
-        this.createConnection();
+    
+    constructor(private tokenService: TokenService) {
+        this.createConnection(); 
         this.startConnection();
-       // this.listenParticipants();
+        this.listenParticipants();
         this.listenMessages();
     }
 
@@ -24,7 +25,7 @@ export class ChatService {
         console.log('criar conexao');
         this._hubConnection = new HubConnectionBuilder()
           .withUrl('https://localhost:5001/chat', {
-            accessTokenFactory: () => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InJvYmluIiwicm9sZSI6ImVtcGxveWVlIiwibmJmIjoxNTg3ODU4NTQ4LCJleHAiOjE1ODc4NjU3NDgsImlhdCI6MTU4Nzg1ODU0OH0.i_ceoc_OecCcYooohKHn5K5Zkrr8pIWvnMOUMwutZwA"
+            accessTokenFactory: () => this.tokenService.getToken()
           })
           .build();
     }
@@ -43,21 +44,43 @@ export class ChatService {
           });
     }
     
-    sendMessage(message: Message): void {
-        // por enquanto envia para todos clientes
+    sendMessage(message: Message, receiver?: string): void {
+        console.log('enviar...')
+        console.log(message);
+        if (receiver){
+            this._hubConnection.invoke('SendPrivate',receiver, message);
+            return;
+        }
         this._hubConnection.invoke('SendAll', message);
+    }
+    
+    createMessageToSend(txtMessage: string): Message {
+        let message = new Message();
+        message.isReceived = false;
+        message.text = txtMessage;
+        message.sendDate = new Date();
+        return message;
     }
 
     private listenMessages(): void {
-        // apenas escutando todas msgs
-        this._hubConnection.on('ReceiveAllMessages', (data: any) => {
+        this._hubConnection.on('ReceiveAllMessages', (data: Message) => {
+            data.isReceived = true;
+            data.isPrivate = false;
+            this.messageReceived.emit(data);
+        });
+
+        this._hubConnection.on('ReceivePrivateMessages', (data: Message) => {
+            data.isReceived = true;
+            data.isPrivate = true;
             this.messageReceived.emit(data);
         });
     }
-
+ 
     private listenParticipants(){
         this._hubConnection.on('NewParticipant', (data: any) => {
-            this.participantConnected.emit(data);
+            let participant = new Participant();
+            participant.Name = data;
+            this.participantConnected.emit(participant);
         })
     }
 }
