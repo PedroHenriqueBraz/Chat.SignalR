@@ -12,8 +12,6 @@ export class LoginService {
   
   constructor(private http: HttpClient){}
 
-    // envio o usuario para uma API login e recebo um token
-    // devo gravar esse token no local storage??
     authenticateUser(user): Observable<any> {
       return this.http.post(this.apiLogin, user);
     }

@@ -20,11 +20,9 @@ export class LoginComponent {
   
   sendUser() {
     if(this.user) {
-      console.log(this.user);
       this.loginService.authenticateUser(this.user)
       .subscribe(
         data => {
-          console.log(data);
           this.tokenService.setToken(data.token);
           this.router.navigate(['/chat']);
         });

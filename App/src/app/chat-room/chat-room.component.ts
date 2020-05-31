@@ -20,6 +20,7 @@ export class ChatRoomComponent implements OnInit{
   constructor(private chatService: ChatService){}
 
   ngOnInit(): void {
+    this.getOnlineUsers();
     this.receiveParticipants();
     this.receiveMessages();
   }
@@ -33,8 +34,7 @@ export class ChatRoomComponent implements OnInit{
     }
   }
 
-  sendTo(name?: string){
-    console.log(name)
+  sendTo(name?: string) {
    this.receiverName = name;
   }
 
@@ -52,11 +52,17 @@ export class ChatRoomComponent implements OnInit{
     });
   }
 
-  private pushLocalMessages(message: Message, receiverName: string){
+  private pushLocalMessages(message: Message, receiverName: string) {
     if (receiverName) {
       message.isPrivate = true;
     }
     this.messages.push(message);
+  }
+
+  private getOnlineUsers(){
+    this.chatService.getOnlineUsers().subscribe((data: Array<Participant>) => {
+      this.participants = data;
+    });
   }
 }
  

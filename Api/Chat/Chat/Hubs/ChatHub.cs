@@ -1,4 +1,5 @@
 ﻿using Chat.Models;
+using Chat.Repositories;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 
@@ -8,14 +9,16 @@ namespace Chat.Hubs
     {
         public override async Task OnConnectedAsync()
         {
-            //await Clients.All.SendAsync("NewParticipant", Context.UserIdentifier);
+            var user = UserRepository.GetUserByName(Context.UserIdentifier);
+            UserRepository.AddOnlineUser(user);
+
             await Clients.Others.SendAsync("NewParticipant", Context.UserIdentifier);
         }
 
         public async Task SendAll(Message message)
         {
             message.SenderName = Context.UserIdentifier;
-            await Clients.All.SendAsync("ReceiveAllMessages", message);
+            await Clients.Others.SendAsync("ReceiveAllMessages", message);
         }
 
         public async Task SendPrivate(string id, Message message)

@@ -3,6 +3,8 @@ import { Message } from 'src/models/Message';
 import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 import { Participant } from 'src/models/Participant';
 import { TokenService } from './token.service';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
     providedIn: 'root',
@@ -14,7 +16,7 @@ export class ChatService {
     private _hubConnection: HubConnection;
     connectionId: string;
     
-    constructor(private tokenService: TokenService) {
+    constructor(private tokenService: TokenService, private http: HttpClient) {
         this.createConnection(); 
         this.startConnection();
         this.listenParticipants();
@@ -48,6 +50,8 @@ export class ChatService {
         console.log('enviar...')
         console.log(message);
         if (receiver){
+            console.log('privado');
+            console.log(receiver);
             this._hubConnection.invoke('SendPrivate',receiver, message);
             return;
         }
@@ -60,6 +64,10 @@ export class ChatService {
         message.text = txtMessage;
         message.sendDate = new Date();
         return message;
+    }
+
+    getOnlineUsers(): Observable<Array<Participant>> {
+        return this.http.get<Array<Participant>>('http://localhost:5000/user/users');
     }
 
     private listenMessages(): void {
@@ -77,9 +85,8 @@ export class ChatService {
     }
  
     private listenParticipants(){
-        this._hubConnection.on('NewParticipant', (data: any) => {
-            let participant = new Participant();
-            participant.Name = data;
+        this._hubConnection.on('NewParticipant', (data: string) => {
+            const participant: Participant = {username: data}
             this.participantConnected.emit(participant);
         })
     }
