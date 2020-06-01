@@ -5,7 +5,7 @@
         <div class="card-body contacts_body">
           <h3>Participantes</h3>
           <ul class="contacts" >
-            <li >
+            <li class="active" tabindex="0">
               <div class="d-flex bd-highlight" (click)="sendTo()">
                 <div class="user_info">
                   <span>Todos</span>
@@ -14,7 +14,7 @@
               </div>
             </li>
             <div *ngFor="let part of participants">
-              <li >
+              <li class="active" tabindex="0">
                 <div class="d-flex bd-highlight" (click)="sendTo(part.username)">
                   <div class="img_cont">
                     <img src="assets/img-user-geral.png" class="rounded-circle user_img">
